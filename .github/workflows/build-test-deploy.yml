@@ -54,7 +54,7 @@ jobs:
       - name: Configuring github page
         uses: actions/configure-pages@v3
         with:
-          static-site-generator: next
+          static_site_generator: next
       - name: Setting up page artifact
         uses: actions/upload-pages-artifact@v1
         with:
