@@ -26,4 +26,39 @@ jobs:
       - run: |
           npm install
           npm test
-    
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      deployments: write
+      contents: write
+      actions: write
+      statuses: write
+      pages: write
+      id-token: write
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - run: |
+          npm install
+          npm run build
+      - name: Configuring github page
+        uses: actions/configure-pages@v3
+        with:
+          static-site-generator: next
+      - name: Setting up page artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./out
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v1
